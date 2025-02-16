@@ -12,11 +12,23 @@ class PullRequestsSync implements ShouldQueue
 {
     use Queueable;
 
+    public function __construct(public ?int $page = 1)
+    {
+
+    }
+
     public function handle(): void
     {
-        $pullRequests = Http::get('https://api.github.com/repos/laravel/laravel/pulls?state=all&page=1');
+        $pullRequestsResponse = Http::withToken(config('services.github_access_token'))
+            ->get('https://api.github.com/repos/laravel/laravel/pulls?state=all&page='.$this->page);
 
-        foreach ($pullRequests->json() as $request) {
+        $pullRequests = $pullRequestsResponse->json();
+
+        if(empty($pullRequests)){
+            return;
+        }
+
+        foreach ($pullRequests as $request) {
             
             PullRequest::query()->create([
                 'api_id' => $request['id'],
@@ -29,7 +41,7 @@ class PullRequestsSync implements ShouldQueue
                 'api_merged_at' => Carbon::parse($request['merged_at'])->format('Y-m-d H:i:s'),
             ]);
     
-    
         }
+        PullRequestsSync::dispatch($this->page + 1);
     }
 }
