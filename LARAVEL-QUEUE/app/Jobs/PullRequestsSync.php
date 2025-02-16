@@ -12,7 +12,7 @@ class PullRequestsSync implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public ?int $page = 1)
+    public function __construct(public string $repositoryFulName, public ?int $page = 1)
     {
 
     }
@@ -20,7 +20,7 @@ class PullRequestsSync implements ShouldQueue
     public function handle(): void
     {
         $pullRequestsResponse = Http::withToken(config('services.github_access_token'))
-            ->get('https://api.github.com/repos/laravel/laravel/pulls?state=all&page='.$this->page);
+            ->get('https://api.github.com/repos/'.$this->repositoryFulName.'/pulls?state=all&page='.$this->page);
 
         $pullRequests = $pullRequestsResponse->json();
 
@@ -42,6 +42,7 @@ class PullRequestsSync implements ShouldQueue
             ]);
     
         }
-        PullRequestsSync::dispatch($this->page + 1);
+        $nextPage = $this->page + 1;
+        PullRequestsSync::dispatch($this->repositoryFulName, $nextPage);
     }
 }
