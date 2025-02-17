@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Services\Github\Console\Comands;
 
 use Illuminate\Console\Command;
 
@@ -16,7 +16,7 @@ class PullRequestSync extends Command
      */
     public function handle()
     {
-        \App\Jobs\PullRequestsSync::dispatch(
+        \App\Services\Github\Jobs\PullRequestsSync::dispatch(
             $this->argument('repositoryFullName')
         );
     }
