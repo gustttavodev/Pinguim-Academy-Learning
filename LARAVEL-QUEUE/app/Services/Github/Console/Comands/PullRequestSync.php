@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 class PullRequestSync extends Command
 {
 
-    protected $signature = 'app:pull-request-sync {repositoryFullName}';
+    protected $signature = 'github:pull-request-sync {repositoryFullName}';
 
     protected $description = 'Command description';
 
