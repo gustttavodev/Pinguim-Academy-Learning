@@ -2,13 +2,9 @@
 
 namespace App\Services\Github\Jobs;
 
-use App\Models\PullRequest;
 use App\Services\Github\PullRequestService;
-use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Http;
 
 class PullRequestsSync implements ShouldQueue
 {
@@ -32,6 +28,7 @@ class PullRequestsSync implements ShouldQueue
     
         }
         $nextPage = $this->page + 1;
+
         PullRequestsSync::dispatch($this->repositoryFulName, $nextPage);
     }
 }

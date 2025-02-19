@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class Client
 {
-    private string $baseURL = 'https://api.github.com/';
+    private string $baseURL = 'https://api.github.com';
 
     public function http(): PendingRequest
     {
