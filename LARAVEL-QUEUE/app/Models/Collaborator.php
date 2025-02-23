@@ -9,8 +9,12 @@ class Collaborator extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'api_id',
+        'login',
+    ];
     public function pullRequests()
     {
-        return $this->belongsToMany(PullRequest::class);
+        return $this->belongsToMany(PullRequest::class)->withTimestamps();
     }
 }

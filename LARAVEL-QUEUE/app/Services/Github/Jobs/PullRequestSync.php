@@ -23,7 +23,7 @@ class PullRequestSync implements ShouldQueue
     {
         $pullRequest = (new PullRequestService())->getPullRequest($this->repositoryFulName, $this->number);
 
-        PullRequest::query()->create([
+        $pr = PullRequest::query()->create([
             'api_id' => $pullRequest['id'],
             'api_number' => $pullRequest['number'],
             'state' => $pullRequest['state'],
@@ -35,6 +35,6 @@ class PullRequestSync implements ShouldQueue
             'api_merged_at' => Carbon::parse($pullRequest['merged_at'])->format('Y-m-d H:i:s'),
         ]);
 
-        PullRequestReviewersRequestedSync::dispatch($this->repositoryFulName, $this->number);
+        PullRequestReviewersRequestedSync::dispatch($pr,$this->repositoryFulName);
     }
 }
