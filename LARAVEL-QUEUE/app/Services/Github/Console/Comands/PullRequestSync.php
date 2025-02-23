@@ -3,11 +3,12 @@
 namespace App\Services\Github\Console\Comands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 
 class PullRequestSync extends Command
 {
 
-    protected $signature = 'github:pull-request-sync {repositoryFullName}';
+    protected $signature = 'github:pull-requests-sync {repositoryFullName}';
 
     protected $description = 'Command description';
 
@@ -16,8 +17,14 @@ class PullRequestSync extends Command
      */
     public function handle()
     {
-        \App\Services\Github\Jobs\PullRequestsSync::dispatch(
-            $this->argument('repositoryFullName')
-        );
+        Bus::batch([
+            new \App\Services\Github\Jobs\PullRequestsSync($this->argument('repositoryFullName')),
+        ])
+
+        ->then(function () {
+            info('All done');
+        })
+        ->dispatch();
+
     }
 }

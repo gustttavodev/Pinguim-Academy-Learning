@@ -5,6 +5,7 @@ namespace App\Services\Github\Jobs;
 use App\Models\PullRequest;
 use App\Services\Github\PullRequestService;
 use Carbon\Carbon;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Http;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Http;
 class PullRequestSync implements ShouldQueue
 {
     use Queueable;
-
+    use Batchable;
 
     public function __construct(public string $repositoryFulName, public int $number)
     {
@@ -34,7 +35,9 @@ class PullRequestSync implements ShouldQueue
             'api_closed_at' => Carbon::parse($pullRequest['closed_at'])->format('Y-m-d H:i:s'),
             'api_merged_at' => Carbon::parse($pullRequest['merged_at'])->format('Y-m-d H:i:s'),
         ]);
-
-        PullRequestReviewersRequestedSync::dispatch($pr,$this->repositoryFulName);
+        
+        $this->batch()->add([
+            new PullRequestReviewersRequestedSync($pr,$this->repositoryFulName)
+        ]);
     }
 }

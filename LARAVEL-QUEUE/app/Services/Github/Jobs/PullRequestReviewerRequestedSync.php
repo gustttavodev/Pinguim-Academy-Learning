@@ -5,12 +5,14 @@ namespace App\Services\Github\Jobs;
 use App\Models\Collaborator;
 use App\Models\PullRequest;
 use App\Services\Github\PullRequestReviewersRequestedService;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
 class PullRequestReviewerRequestedSync implements ShouldQueue
 {
     use Queueable;
+    use Batchable;
 
     /**
      * Create a new job instance.

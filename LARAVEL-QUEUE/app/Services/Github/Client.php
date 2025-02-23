@@ -16,7 +16,7 @@ class Client
         ])
             ->withHeaders([
                 'Accept' => 'application/vnd.github+json',
-                'X-Github-Api-Version' => '22-11-28'
+                'X-Github-Api-Version' => '2022-11-28'
             ])
             ->withToken(config('services.github_access_token'));
     }

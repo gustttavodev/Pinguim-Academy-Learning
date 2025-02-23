@@ -3,12 +3,14 @@
 namespace App\Services\Github\Jobs;
 
 use App\Services\Github\PullRequestService;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
 class PullRequestsSync implements ShouldQueue
 {
     use Queueable;
+    use Batchable;
 
     public function __construct(public string $repositoryFulName, public ?int $page = 1)
     {
@@ -24,8 +26,10 @@ class PullRequestsSync implements ShouldQueue
         }
 
         foreach ($pullRequests as $pullRequest) {
-            dump($pullRequest);
-            \App\Services\Github\Jobs\PullRequestSync::dispatch($this->repositoryFulName, $pullRequest['number']);
+            $this->batch()->add([
+                new \App\Services\Github\Jobs\PullRequestSync($this->repositoryFulName, $pullRequest['number'])
+            ]);
+            
     
         }
         $nextPage = $this->page + 1;
