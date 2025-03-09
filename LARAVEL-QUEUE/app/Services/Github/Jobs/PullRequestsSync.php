@@ -25,15 +25,19 @@ class PullRequestsSync implements ShouldQueue
             return;
         }
 
-        foreach ($pullRequests as $pullRequest) {
-            $this->batch()->add([
-                new \App\Services\Github\Jobs\PullRequestSync($this->repositoryFulName, $pullRequest['number'])
-            ]);
-            
-    
-        }
-        $nextPage = $this->page + 1;
+        $jobs = [];
 
-        PullRequestsSync::dispatch($this->repositoryFulName, $nextPage);
+        foreach ($pullRequests as $pullRequest) {
+            
+            $jobs[] = new PullRequestSync($this->repositoryFulName, $pullRequest['number']);
+
+        }
+        $this->batch()->add($jobs);
+
+        $nextPage = $this->page + 1;
+        $this->batch()->add(jobs: [
+            new PullRequestsSync($this->repositoryFulName, $nextPage)
+        ]);
+        
     }
 }

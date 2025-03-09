@@ -23,11 +23,14 @@ class PullRequestReviewersRequestedSync implements ShouldQueue
     {
         $response = (new PullRequestReviewersRequestedService())->getAll($this->repositoryFullName, $this->pullRequest->api_number);
         $collaborators = $response['users'];
+        
+        $jobs = [];
 
         foreach ($collaborators as $collaborator) {
-            $this->batch()->add([
-                new PullRequestReviewerRequestedSync($this->pullRequest, $collaborator)
-            ]);
+            $jobs[] = new PullRequestReviewerRequestedSync($this->pullRequest, $collaborator);
+
         }
+
+        $this->batch()->add($jobs);
     }
 }

@@ -17,7 +17,7 @@ class PullRequestReviewerRequestedSync implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public PullRequest $pulllRequest, public array $collaborator)
+    public function __construct(public PullRequest $pullRequest, public array $collaborator)
     {
         
     }
@@ -31,7 +31,7 @@ class PullRequestReviewerRequestedSync implements ShouldQueue
         );
 
 
-        $collaborator->pullRequests()->attach($this->pulllRequest);
+        $collaborator->pullRequests()->attach($this->pullRequest);
         
     }
 }
