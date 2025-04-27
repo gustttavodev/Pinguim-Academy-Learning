@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Support\Facades\Http;
 
 class PullRequestSync implements ShouldQueue
@@ -19,6 +20,14 @@ class PullRequestSync implements ShouldQueue
     {
         
     }
+
+    public function middleware()
+    {
+        return [
+            new SkipIfBatchCancelled(),
+        ];
+    }
+
 
     public function handle(): void
     {

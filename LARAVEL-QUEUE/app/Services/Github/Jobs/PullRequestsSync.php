@@ -6,6 +6,7 @@ use App\Services\Github\PullRequestService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
 class PullRequestsSync implements ShouldQueue
 {
@@ -16,6 +17,14 @@ class PullRequestsSync implements ShouldQueue
     {
 
     }
+
+    public function middleware()
+    {
+        return [
+            new SkipIfBatchCancelled(),
+        ];
+    }
+
 
     public function handle(): void
     {
